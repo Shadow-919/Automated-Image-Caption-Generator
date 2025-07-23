@@ -1,9 +1,0 @@
-# Ignore folders
-__pycache__/
-.vscode/
-documentation/
-model/
-
-# Ignore files
-blip.py
-generated_captions.json
