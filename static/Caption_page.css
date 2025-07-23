@@ -1,0 +1,428 @@
+body {
+  padding-top: 80px;
+  font-family: 'Poppins', sans-serif;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background-color: #000000;
+  background-image: url('/static/images/background.png'); 
+  background-size: cover; 
+  background-position: center; 
+  background-repeat: no-repeat; 
+  background-attachment: fixed;
+  position: relative;
+}
+
+/* Logo Button Styles */
+.logo-button {
+  position: fixed;
+  top: 20px;
+  left: 20px;
+  background: #1b1f3b;
+  border-radius: 40px;
+  display: flex;
+  align-items: center;
+  padding: 14px 28px;
+  z-index: 1000;
+  box-shadow: 0px 6px 14px rgba(0, 0, 0, 0.3);
+  cursor: pointer;
+}
+
+.logo-container {
+  display: flex;
+  align-items: center;
+  text-decoration: none;
+  width: 100%;
+}
+
+.logo-img {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  margin-right: 12px;
+}
+
+.logo-text {
+  font-size: 22px;
+  font-weight: 600;
+  color: white;
+  font-family: 'Poppins', sans-serif;
+}
+
+.logo-button:hover {
+  background: #1b1f3b;
+}
+
+/* Title Styles */
+.title {
+  margin-top: 100px;
+  text-align: center;
+  color: white;
+  font-size: 60px;
+  font-weight: 500;
+  margin-bottom: 20px;
+}
+
+/* Drag and Drop Box Styles */
+.drop-box {
+  margin-top: 80px;
+  position: relative;
+  width: 550px;
+  max-width: 90%;
+  padding: 3rem;
+  min-height: 250px;
+  border-radius: 15px;
+  text-align: center;
+  background: #E0E0E0;
+  margin-bottom: 20px;
+}
+
+/* Pseudo-element for dashed border inset within the drop-box */
+.drop-box::before {
+  content: '';
+  position: absolute;
+  top: 15px;
+  left: 15px;
+  right: 15px;
+  bottom: 15px;
+  border: 4px dashed #ff3c00;
+  border-radius: 15px;
+  pointer-events: none;
+  transition: border-color 0.3s ease;
+  z-index: 0;
+}
+
+.drop-box.active::before {
+  border-color: blue;
+}
+
+/* Ensure inner elements appear above the pseudo-element */
+.drop-box > * {
+  position: relative;
+  z-index: 1;
+}
+
+.drop-box.uploaded::before {
+  border-color: blue;
+}
+
+
+.drop-text {
+  margin-top: 10px;
+  margin-bottom: 30px;
+  font-size: 32px;
+  font-weight: bold;
+  color: #2c3e50;
+  overflow-wrap: break-word;
+  white-space: normal;
+  position: relative; /* if needed */
+}
+
+.image-formats {
+  color: #2c3e50;
+  font-weight: 500;
+  position: absolute;
+  top: calc(30px + 52px); /* adjust this so it appears immediately below .drop-text */
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 20px;
+}
+
+
+
+.or-text {
+  
+  margin-bottom: 30px;
+  font-size: 28px;
+  color: #2c3e50;
+}
+
+#fileInput {
+  display: none;
+}
+
+/* Common styles for both Upload & Camera buttons */
+.custom-file-upload,
+.open-camera-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  font-size: 18px;
+  font-weight: 700;
+  background-color: #3498db;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  padding: 14px 30px;
+}
+
+/* Hover effects */
+.custom-file-upload:hover,
+.open-camera-btn:hover {
+  background-color: #2980b9;
+}
+
+/* Adjust icon size/spacing if needed */
+.custom-file-upload i,
+.open-camera-btn i {
+  font-size: 24px;
+  margin-top: 5px;
+}
+
+/* Uploaded file name styles */
+.uploaded-prefix {
+  font-size: 22px;
+  color: #000000;
+  margin: 10px 0;
+  font-weight: bold;
+}
+
+.uploaded-filename {
+  font-size: 22px;
+  color: #2c3e50;
+  margin: 10px 0;
+  overflow-wrap: break-word;
+  white-space: normal;
+}
+
+/* "Remove" link style */
+.remove-text {
+  color: blue;
+  text-decoration: underline;
+  cursor: pointer;
+  margin-top: 8px;
+  font-size: 24px;
+}
+
+.button-group {
+  display: flex;
+  gap: 20px;
+  justify-content: center;
+  align-items: center;
+  margin-top: 15px;
+}
+
+/* Generate Button Styles */
+button.generate-btn {
+  padding: 14px 30px;
+  font-size: 18px;
+  font-weight: 700;
+  background-color: #1fba60;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  margin-bottom: 20px;
+}
+
+button.generate-btn:hover {
+  background-color: #27ae60;
+}
+
+/* Modal (Result) Styles */
+.result-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.5);
+  backdrop-filter: blur(5px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 2000;
+}
+
+.result-container {
+  background-color: #f9f9f9;
+  padding: 2.5rem 3rem;
+  border-radius: 15px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  position: relative;
+  width: 80%;
+  max-width: 900px;
+  height: 800px;
+  overflow: hidden;
+  margin: 0 auto;
+}
+
+/* Back Button Styles */
+.back-button {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  transition: transform 0.3s ease;
+}
+
+.back-button:hover {
+  transform: scale(1.1);
+}
+
+.back-icon {
+  width: 60px;
+  height: 60px;
+  object-fit: contain;
+}
+
+/* Image Preview Styles */
+#imagePreview {
+  max-width: 100%;
+  max-height: 500px;
+  border-radius: 10px;
+  display: block;
+  margin: 60px auto 20px auto;
+  border: 4px solid #ff3c00;
+  box-shadow: 0 0 20px rgba(255, 0, 0, 0.9);
+  padding: 5px;
+}
+
+/* Caption Container Styles with Neon Blue Style */
+.caption-container {
+  width: 700px;
+  margin: 10px auto;
+  padding: 1em 1.2em;
+  background-color: #ffffff;
+  border-radius: 8px;
+  border: 4px solid #0ff;
+  box-shadow: 0 0 20px rgba(0, 255, 255, 0.9);
+  color: rgb(0, 0, 0);
+  font-size: 38px;
+  font-weight: bold;
+  font-family: 'Poppins' ;
+  text-align: center;
+  transition: all 0.3s ease;
+  word-break: break-word;
+  -webkit-text-stroke: 1px #0ff;
+  text-shadow: 
+    0 0 3px #0ff,
+    0 0 5px #0ff,
+    0 0 7px #0ff,
+    0 0 10px #0ff;
+}
+
+.caption-container::first-letter {
+  text-transform: uppercase;
+}
+
+/* Caption Wrapper */
+.caption-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: fit-content; 
+  margin: 0 auto; 
+  position: relative;
+}
+
+/* Speaker Icon Styles */
+#speakerIcon {
+  position: absolute;
+  width: 60px;
+  height: 60px;
+  left: -70px;
+  top: 50%;
+  transform: translateY(-50%);
+  border: 2px solid #000;
+  border-radius: 50%;
+  background-color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  cursor: pointer;
+}
+
+#speakerIcon img {
+  max-width: 60%;
+  max-height: 60%;
+}
+
+/* Camera Preview Overlay */
+.camera-preview-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: #000;
+  display: none;
+  z-index: 2;
+}
+
+.camera-preview-overlay video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Capture Button (small circle with camera icon) */
+.capture-btn {
+  position: absolute;
+  bottom: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 50px;
+  height: 50px;
+  background-color: grey;
+  border: none;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.capture-btn i {
+  color: white;
+  font-size: 24px;
+}
+
+/* --- New Drop Box Overlay Styles --- */
+.drop-overlay {
+    display: none;  /* Hidden initially */
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: transparent; 
+    border-radius: 15px;
+    text-align: center;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    pointer-events: none;
+    z-index: 2;
+}
+
+.drop-here-text {
+    font-size: 36px;
+    font-weight: bold;
+    color: black;
+    margin-bottom: 10px;
+}
+
+.drop-icon {
+    font-size: 50px;
+    color: blue;
+}
+
+/* Show overlay and hide default content when dragging */
+.drop-box.active .drop-overlay {
+    display: flex;
+}
+
+.drop-box.active .drop-text,
+.drop-box.active .image-formats,
+.drop-box.active .or-text,
+.drop-box.active .button-group {
+    display: none;
+}

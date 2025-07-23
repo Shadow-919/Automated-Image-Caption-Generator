@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CapX-AI</title>
+  <link rel="shortcut icon" href="/static/images/AI_Logo.PNG" type="image/x-icon">
+  <link rel="stylesheet" href="/static/Landing_page.css">
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
+</head>
+
+<body>
+
+  <!-- Header -->
+  <div class="header-container">
+    <p id="capx-text">CapX-AI</p>
+    <a href="{{ url_for('app_page') }}" id="get-started-button">Get Started</a>
+  </div>
+
+  <!-- Hero Section -->
+  <div class="main-container">
+    <div class="text-section">
+      <h1 id="pro-text">Caption Like A Pro</h1>
+      <p id="transform-text">Transform your images into captions with our cutting-edge technology.</p>
+      <p id="let-text">Let your visuals speak volumes with just a click.</p>
+      <a href="{{ url_for('app_page') }}" id="tryitnow-btn">Try it Now</a>
+    </div>
+    <img id="img-wrapper" src="/static/images/gradient-geometric-shapes-dark-background_23-2148445831.avif" alt="background-image">
+  </div>
+
+  <!-- Common Queries Section -->
+  <h2 id="commonqueries">Common Queries</h2>
+
+  <div class="accordion">
+    <div class="accordion-item">
+      <button class="accordion-header">
+        <span>What is this tool?</span>
+        <img class="arrow" src="/static/images/arrow.png" alt="arrow-icon">
+      </button>
+      <div class="accordion-body">
+        It generates captions for your images automatically!
+      </div>
+    </div>
+
+    <div class="accordion-item">
+      <button class="accordion-header">
+        <span>How does it work?</span>
+        <img class="arrow" src="/static/images/arrow.png" alt="arrow-icon">
+      </button>
+      <div class="accordion-body">
+        Just upload an image, and let the magic happen!
+      </div>
+    </div>
+
+    <div class="accordion-item">
+      <button class="accordion-header">
+        <span>What formats are supported?</span>
+        <img class="arrow" src="/static/images/arrow.png" alt="arrow-icon">
+      </button>
+      <div class="accordion-body">
+        JPG, PNG and WebP formats are all supported!
+      </div>
+    </div>
+
+    <div class="accordion-item">
+      <button class="accordion-header">
+        <span>Is it easy to use?</span>
+        <img class="arrow" src="/static/images/arrow.png" alt="arrow-icon">
+      </button>
+      <div class="accordion-body">
+        Yes! User-friendly interface for everyone.
+      </div>
+    </div>
+  </div>
+
+  <!-- Key Features Section (AFTER Common Queries) -->
+  <div class="features-container">
+    <!-- Left Accordion -->
+    <div class="features-left">
+      <img src="/static/images/settings.png" alt="settings-icon" class="settings-icon">
+      <h1 class="features-heading">Key Features</h1>
+      <p class="features-subheading">What makes us special?</p>
+
+      <div class="feature-accordion">
+        <div class="feature-item">
+          <button class="feature-header">
+            <span>Fast Caption Generation</span>
+            <img class="arrow" src="/static/images/arrow.png" alt="arrow-icon">
+          </button>
+          <div class="feature-body">
+            The system quickly processes images and generates captions in real-time, ensuring minimal delay and a smooth user experience.
+          </div>
+        </div>
+
+        <div class="feature-item">
+          <button class="feature-header">
+            <span>Versatile Use Cases</span>
+            <img class="arrow" src="/static/images/arrow.png" alt="arrow-icon">
+          </button>
+          <div class="feature-body">
+            This tool is ideal for various applications, including Social Media, Blog Posts, and E-commerce Sites, enhancing user engagement, SEO, and accessibility by providing accurate and context-aware captions for images.
+          </div>
+        </div>
+
+        <div class="feature-item">
+          <button class="feature-header">
+            <span>Higher Model Metrics</span>
+            <img class="arrow" src="/static/images/arrow.png" alt="arrow-icon">
+          </button>
+          <div class="feature-body">
+            Generates precise and context-aware captions by leveraging deep learning models, ensuring relevance and minimal errors.
+          </div>
+        </div>
+
+        <div class="feature-item">
+          <button class="feature-header">
+            <span>User-Friendly Interface</span>
+            <img class="arrow" src="/static/images/arrow.png" alt="arrow-icon">
+          </button>
+          <div class="feature-body">
+            A simple and intuitive UI allowing users to easily upload images, generate captions with a single click, and view results seamlessly.
+          </div>
+        </div>
+
+        <div class="feature-item">
+          <button class="feature-header">
+            <span>Text-to-Speech Integration</span>
+            <img class="arrow" src="/static/images/arrow.png" alt="arrow-icon">
+          </button>
+          <div class="feature-body">
+            Converts generated captions into natural-sounding speech, enhancing accessibility and usability for visually impaired users.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Right Image -->
+    <div class="features-right">
+      <img src="/static/images/Convolutional_Neural_Network_Tutorial.avif" alt="feature-image" class="feature-image">
+    </div>
+  </div>
+
+  <div class="why-container">
+  <!-- Left Text Section -->
+  <div class="why-left">
+    <h1 class="why-heading">Why You Need This?</h1>
+    <p class="why-paragraph">
+      In a world where manually creating captions consumes a lot of time, this tool transforms your images into contextual captions within seconds!
+    </p>
+    <p class="why-paragraph">
+      Enhance the accessibility and discoverability of your visuals with accurate, AI-generated captions.
+    </p>
+    <p class="why-paragraph">
+      Join the new wave of intelligent captioning solutions and experience the ease of instant, precise captions for every image.
+    </p>
+  </div>
+
+  <!-- Right Image Section -->
+  <div class="why-right">
+    <img src="/static/images/stopwatch.jpg" alt="Caption in seconds" class="why-image img1">
+    <img src="/static/images/robo_hand.jpg" alt="AI generated captions" class="why-image img2">
+  </div>
+  </div>
+
+  <!-- 🔥 Scroll to Top Button -->
+<div id="scrollToTop">
+  <img src="/static/images/up_arrow.png" alt="Scroll to Top">
+</div>
+
+
+  <script src="/static/Landing_page.js"></script>
+</body>
+</html>
