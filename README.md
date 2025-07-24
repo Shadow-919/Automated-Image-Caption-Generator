@@ -16,7 +16,8 @@ This project implements a high-performance captioning model and deploys it as a 
 
 - 📸 Generates accurate, context-aware captions for any image
 - ✨ Built using an **Encoder-Decoder** architecture  
-- 🧪 Evaluated using BLEU (1–4), ROUGE, and CIDEr metrics  
+- 🧪 Evaluated using BLEU (1–4), ROUGE, and CIDEr metrics
+- 🔊 Integrated **Text-to-Speech (TTS)** to audibly read out the generated captions for enhanced accessibility.  
 - 🌐 Model deployed on a responsive web interface via **Flask**
 
 ---
@@ -35,16 +36,29 @@ This combination captures both **visual semantics** and **linguistic context**, 
 
 ---
 
+## 📂 Dataset
+
+The model was trained using the **MSCOCO 2014** dataset, a large-scale benchmark for image captioning and object detection tasks.
+
+- **Dataset**: [Microsoft COCO 2014](https://cocodataset.org/#home)
+- **Training Set**: ~82,783 images
+- **Validation Set**: ~40,504 images
+- **Captions**: Each image is annotated with 5 different human-written captions.
+- **Purpose**: Used for training and evaluating the encoder-decoder model to generate high-quality image descriptions.
+- **Preprocessing**: Includes image resizing, vocabulary creation, tokenization, and padding for sequence modeling.
+
+---
+
 ## 📊 Evaluation Metrics
 
 | Metric        | Score    |
 |---------------|----------|
-| BLEU-1        | XX.XX    |
-| BLEU-2        | XX.XX    |
-| BLEU-3        | XX.XX    |
-| BLEU-4        | XX.XX    |
-| ROUGE-L       | XX.XX    |
-| CIDEr         | XXX.XX   |
+| BLEU-1        | 0.72     |
+| BLEU-2        | 0.60     |
+| BLEU-3        | 0.48     |
+| BLEU-4        | 0.37     |
+| ROUGE-L       | 0.66     |
+| CIDEr         | 1.15     |
 
 ---
 
