@@ -35,40 +35,6 @@ This combination captures both **visual semantics** and **linguistic context**, 
 
 ---
 
-## 🌐 Project UI Screens
-
-### 🖥️ Landing Page
-
-<p align="center">
-  <img src="assets/landing1.png" width="30%" />
-  <img src="assets/landing2.png" width="30%" />
-  <img src="assets/landing3.png" width="30%" />
-</p>
-<p align="center">
-  <img src="assets/landing4.png" width="60%" />
-</p>
-
-### 🧾 Caption Generation Page
-
-<p align="center">
-  <img src="assets/caption_page.png" width="60%" />
-</p>
-
----
-
-## 🖼️ Caption Outputs (Sample Results)
-
-<p align="center">
-  <img src="assets/output1.png" width="45%" />
-  <img src="assets/output2.png" width="45%" />
-</p>
-<p align="center">
-  <img src="assets/output3.png" width="45%" />
-  <img src="assets/output4.png" width="45%" />
-</p>
-
----
-
 ## 📊 Evaluation Metrics
 
 | Metric        | Score    |
@@ -79,6 +45,36 @@ This combination captures both **visual semantics** and **linguistic context**, 
 | BLEU-4        | XX.XX    |
 | ROUGE-L       | XX.XX    |
 | CIDEr         | XXX.XX   |
+
+---
+
+## 🌐 Project UI Screens
+
+### 🖥️ Landing Page
+
+<p align="center">
+  <img src="assets/L1.PNG" width="80%" />
+  <img src="assets/L2.PNG" width="80%" />
+  <img src="assets/L3.PNG" width="80%" />
+  <img src="assets/L4.PNG" width="80%" />
+</p>
+
+### 🧾 Caption Generation Page
+
+<p align="center">
+  <img src="assets/C1.PNG" width="80%" />
+</p>
+
+---
+
+## 🖼️ Caption Outputs (Sample Results)
+
+<p align="center">
+  <img src="assets/O1.PNG" width="100%" />
+  <img src="assets/O2.PNG" width="100%" />
+  <img src="assets/O3.PNG" width="100%" />
+  <img src="assets/O4.PNG" width="100%" />
+</p>
 
 ---
 
