@@ -83,12 +83,16 @@ The model was trained using the **MSCOCO 2014** dataset, a large-scale benchmark
 
 ## 🖼️ Caption Outputs (Sample Results)
 
-<p align="center">
-  <img src="assets/O1.PNG" width="100%" />
-  <img src="assets/O2.PNG" width="100%" />
-  <img src="assets/O3.PNG" width="100%" />
-  <img src="assets/O4.PNG" width="100%" />
-</p>
+<table align="center">
+  <tr>
+    <td><img src="assets/O1.PNG" width="100%"></td>
+    <td><img src="assets/O2.PNG" width="100%"></td>
+  </tr>
+  <tr>
+    <td><img src="assets/O3.PNG" width="100%"></td>
+    <td><img src="assets/O4.PNG" width="100%"></td>
+  </tr>
+</table>
 
 ---
 
