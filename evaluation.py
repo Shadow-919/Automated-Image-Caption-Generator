@@ -1,19 +1,16 @@
-# evaluation.py
-
 import torch
 import torch.nn.functional as F
 import PIL
+from transformers import BertTokenizer
 
-def generate_caption(model, image_path, transform, tokenizer, max_seq_len=256, beam_size=3, device=torch.device("cpu"), print_process=False):
-    """
-    Generates a caption for a single image using beam search.
-    """
+def generate_caption(model, image_path, transform, tokenizer: BertTokenizer,
+                     max_seq_len=256, beam_size=3, device=torch.device("cpu"), print_process=False):
     image = PIL.Image.open(image_path).convert("RGB")
     image = transform(image).unsqueeze(0).to(device)
 
     with torch.no_grad():
         encoder_output = model.encoder(image)
-        beams = [([tokenizer.cls_token_id], 0)]
+        beams = [([tokenizer.cls_token_id], 0.0)]
         completed = []
 
         for step in range(max_seq_len):
@@ -33,14 +30,19 @@ def generate_caption(model, image_path, transform, tokenizer, max_seq_len=256, b
 
             beams = sorted(new_beams, key=lambda x: x[1], reverse=True)[:beam_size]
 
-            # Completed sequences
+            # move finished beams to completed
             for beam in beams[:]:
                 if beam[0][-1] == tokenizer.sep_token_id:
                     completed.append(beam)
                     beams.remove(beam)
-                    beam_size -= 1
 
-            if beam_size == 0:
+            if print_process:
+                print(f"Step {step + 1}/{max_seq_len}")
+                print(f"Beams: {[tokenizer.decode(b[0]) for b in beams]}")
+                print(f"Done:  {[tokenizer.decode(b[0]) for b in completed]}")
+                print("-" * 60)
+
+            if not beams:
                 break
 
         completed = completed or beams

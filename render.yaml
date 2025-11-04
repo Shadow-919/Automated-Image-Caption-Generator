@@ -1,9 +1,0 @@
-services:
-  - type: web
-    name: Captionize
-    env: python
-    plan: free
-    buildCommand: pip install --upgrade pip && pip install -r requirements.txt
-    startCommand: gunicorn app:app --timeout 180
-    envVars:
-      PYTHON_VERSION: 3.10.13

@@ -2,113 +2,142 @@ import os
 import torch
 from flask import Flask, request, jsonify, render_template, url_for
 from transformers import BertTokenizer
+from huggingface_hub import hf_hub_download
 from dotenv import load_dotenv
-import gdown
 
 from models import ImageCaptionModel
 from evaluation import generate_caption
 from utils import transform
 
+# Load .env for local dev; on HF Spaces, set secrets in the UI (HF_TOKEN)
 load_dotenv()
+
 app = Flask(__name__, template_folder="templates", static_folder="static")
 
+# -----------------------------
+# Config via env
+# -----------------------------
+# Example: MODEL_REPO="your-username/your-private-model-repo"
+MODEL_REPO = os.getenv("MODEL_REPO", "").strip()
+MODEL_FILE = os.getenv("MODEL_FILE", "Model_EfficientNetB5_Transformer.pt").strip()
+HF_TOKEN   = os.getenv("HF_TOKEN", "").strip()  # Set in HF Space secrets (Write token)
+
+if not MODEL_REPO:
+    raise RuntimeError("MODEL_REPO not set. Add it as an env/secret in your Space.")
+
+# Force CPU on HF free tier
 device = torch.device("cpu")
 
-# Model paths
-model_dir = "./model"
-os.makedirs(model_dir, exist_ok=True)
-file_name = "Model_EfficientNetB5_Transformer.pt"
-model_path = os.path.join(model_dir, file_name)
+# Where to stage model in ephemeral storage
+os.makedirs("/tmp/models", exist_ok=True)
+local_model_path = os.path.join("/tmp/models", MODEL_FILE)
 
-gdrive_id = os.getenv("GDRIVE_FILE_ID")
-if not gdrive_id:
-    raise ValueError("Missing env GDRIVE_FILE_ID")
+# -----------------------------
+# Fetch model weights (private)
+# -----------------------------
+def ensure_model_downloaded():
+    if os.path.exists(local_model_path):
+        print(f"✅ Using cached model at {local_model_path}")
+        return local_model_path
 
-# Download model
-if not os.path.exists(model_path):
-    print("⬇️ Downloading model...")
-    url = f"https://drive.google.com/uc?id={gdrive_id}"
-    gdown.download(url, model_path, quiet=False)
-    print("✅ Downloaded")
+    print(f"⬇️ Downloading model '{MODEL_FILE}' from private repo '{MODEL_REPO}' ...")
+    path = hf_hub_download(
+        repo_id=MODEL_REPO,
+        filename=MODEL_FILE,
+        token=HF_TOKEN or None,          # token required for private repos
+        repo_type="model",               # model repo type
+        local_dir="/tmp/models",         # ephemeral path
+        local_dir_use_symlinks=False
+    )
+    print(f"✅ Downloaded to {path}")
+    return path
 
+model_path = ensure_model_downloaded()
 
-# Model hyperparams
-embedding_dim = 512
-max_seq_len = 128
-encoder_layers = 6
-decoder_layers = 12
-num_heads = 8
-dropout = 0.1
-beam = 2
+# -----------------------------
+# Build and load model (full precision)
+# -----------------------------
+embedding_dim   = int(os.getenv("EMBED_DIM", "512"))
+max_seq_len     = int(os.getenv("MAX_SEQ_LEN", "128"))
+encoder_layers  = int(os.getenv("ENCODER_LAYERS", "6"))
+decoder_layers  = int(os.getenv("DECODER_LAYERS", "12"))
+num_heads       = int(os.getenv("NUM_HEADS", "8"))
+dropout         = float(os.getenv("DROPOUT", "0.1"))
+beam_size       = int(os.getenv("BEAM_SIZE", "2"))
 
-# Tokenizer
 tokenizer = BertTokenizer.from_pretrained("bert-base-uncased")
 
-# Load model
 model = ImageCaptionModel(
-    embedding_dim,
-    tokenizer.vocab_size,
-    max_seq_len,
-    encoder_layers,
-    decoder_layers,
-    num_heads,
-    dropout
+    embedding_dim=embedding_dim,
+    vocab_size=tokenizer.vocab_size,
+    max_seq_len=max_seq_len,
+    encoder_layers=encoder_layers,
+    decoder_layers=decoder_layers,
+    num_heads=num_heads,
+    dropout=dropout,
 )
 
-state = torch.load(model_path, map_location=device)
+# Load full-precision weights
+state = torch.load(model_path, map_location="cpu")
 model.load_state_dict(state, strict=False)
-
-# Convert to FP16 for Render
-for p in model.parameters():
-    p.data = p.data.half()
-
 model.to(device).eval()
 
-# warm up EfficientNet
+# Optional quick warmup
 try:
-    dummy = torch.zeros((1, 3, 224, 224)).half().to(device)
-    _ = model.encoder(dummy)
-    print("🔥 FP16 warm-up done")
-except:
-    pass
+    with torch.no_grad():
+        _ = model.encoder(torch.zeros(1, 3, 224, 224))
+    print("🔥 Warmup complete")
+except Exception as e:
+    print("Warmup skipped:", e)
 
-# Upload folder
+# Upload dir for served images
 upload_dir = os.path.join(app.static_folder, "uploads")
 os.makedirs(upload_dir, exist_ok=True)
 app.config["UPLOAD_FOLDER"] = upload_dir
 
+# -----------------------------
+# Routes
+# -----------------------------
 @app.route("/")
 def home():
-    return render_template("Landing_page.html")
+    # If you don’t use templates, return a simple HTML here or serve your existing pages.
+    return render_template("Landing_page.html") if os.path.exists(os.path.join("templates","Landing_page.html")) \
+        else "App is running. POST an image to /caption."
 
 @app.route("/app")
-def ui():
-    return render_template("Caption_page.html")
+def caption_ui():
+    return render_template("Caption_page.html") if os.path.exists(os.path.join("templates","Caption_page.html")) \
+        else "Upload form not bundled. Use API POST /caption."
 
 @app.route("/caption", methods=["POST"])
 def caption():
     if "image" not in request.files:
-        return jsonify({"error": "no image"}), 400
+        return jsonify({"error": "No image uploaded"}), 400
 
     image = request.files["image"]
-    save_path = os.path.join(upload_dir, image.filename)
+    filename = image.filename
+    save_path = os.path.join(upload_dir, filename)
     image.save(save_path)
 
-    cap = generate_caption(
-        model,
-        save_path,
-        transform,
-        tokenizer,
-        max_seq_len,
-        beam,
-        device,
-        False
-    )
+    try:
+        text = generate_caption(
+            model=model,
+            image_path=save_path,
+            transform=transform,
+            tokenizer=tokenizer,
+            max_seq_len=max_seq_len,
+            beam_size=beam_size,
+            device=device,
+            print_process=False
+        )
+        return jsonify({
+            "caption": text,
+            "image_url": url_for("static", filename=f"uploads/{filename}", _external=True)
+        })
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
 
-    return jsonify({
-        "caption": cap,
-        "image_url": url_for("static", filename=f"uploads/{image.filename}", _external=True)
-    })
-
+# Local dev entrypoint (HF uses gunicorn via Dockerfile)
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=5000)
+    port = int(os.getenv("PORT", "7860"))
+    app.run(host="0.0.0.0", port=port)
