@@ -1,71 +1,83 @@
-import argparse
-import json
 import os
+import json
 import torch
-from transformers import BertTokenizer
+from tqdm import tqdm
+from pycocotools.coco import COCO
+from pycocoevalcap.eval import COCOEvalCap
 
-from utils import transform
 from models import ImageCaptionModel
 from evaluation import generate_caption
+from utils import transform
+from transformers import BertTokenizer
 
-def main():
-    parser = argparse.ArgumentParser(description="Batch caption generator for metrics")
-    parser.add_argument("--images_list", type=str, required=True,
-                        help="Path to a JSON list of {image_path, image_id}")
-    parser.add_argument("--output_path", type=str, default="./results/predictions.json")
+# ======== CONFIGURATION ========
+COCO_ROOT = r"D:\Aditya docs\BE\Final Year Project\Datasets\coco2014"
+VAL_IMAGES_DIR = os.path.join(COCO_ROOT, "images", "val2014")
+ANNOTATION_FILE = os.path.join(COCO_ROOT, "annotations", "captions_val2014.json")
+MODEL_PATH = "D:\Aditya docs\BE\Final Year Project\Final Project (Image Caption Generator)\model\Model_EfficientNetB5_Transformer.pt"
+BEAM_SIZE = 2
+MAX_SEQ_LEN = 128
+USE_GPU = torch.cuda.is_available()
 
-    parser.add_argument("--embedding_dim", type=int, default=512)
-    parser.add_argument("--tokenizer", type=str, default="bert-base-uncased")
-    parser.add_argument("--max_seq_len", type=int, default=128)
-    parser.add_argument("--encoder_layers", type=int, default=6)
-    parser.add_argument("--decoder_layers", type=int, default=12)
-    parser.add_argument("--num_heads", type=int, default=8)
-    parser.add_argument("--dropout", type=float, default=0.1)
+# ======== DEVICE ========
+device = torch.device("cuda" if USE_GPU else "cpu")
+print(f"Using device: {device}")
 
-    parser.add_argument("--model_path", type=str,
-                        default="./model/Model_EfficientNetB5_Transformer.pt")
-    parser.add_argument("--device", type=str, default="cpu")
-    parser.add_argument("--beam_size", type=int, default=3)
+# ======== LOAD TOKENIZER & MODEL ========
+tokenizer = BertTokenizer.from_pretrained("bert-base-uncased")
 
-    args = parser.parse_args()
+model_configs = {
+    "embedding_dim": 512,
+    "vocab_size": tokenizer.vocab_size,
+    "max_seq_len": MAX_SEQ_LEN,
+    "encoder_layers": 6,
+    "decoder_layers": 12,
+    "num_heads": 8,
+    "dropout": 0.1
+}
 
-    device = torch.device(args.device)
-    tokenizer = BertTokenizer.from_pretrained(args.tokenizer)
+model = ImageCaptionModel(**model_configs)
+model.load_state_dict(torch.load(MODEL_PATH, map_location=device), strict=False)
+model.to(device)
+model.eval()
 
-    model = ImageCaptionModel(
-        embedding_dim=args.embedding_dim,
-        vocab_size=tokenizer.vocab_size,
-        max_seq_len=args.max_seq_len,
-        encoder_layers=args.encoder_layers,
-        decoder_layers=args.decoder_layers,
-        num_heads=args.num_heads,
-        dropout=args.dropout,
-    )
+# ======== LOAD COCO DATASET ========
+coco = COCO(ANNOTATION_FILE)
+image_ids = coco.getImgIds()  # All 5000 validation images
 
-    state = torch.load(args.model_path, map_location=device)
-    model.load_state_dict(state, strict=False)
-    model.to(device).eval()
+results = []
 
-    with open(args.images_list, "r") as f:
-        items = json.load(f)
+# ======== GENERATE CAPTIONS ========
+for img_id in tqdm(image_ids, desc="Generating captions"):
+    img_info = coco.loadImgs(img_id)[0]
+    image_path = os.path.join(VAL_IMAGES_DIR, img_info['file_name'])
 
-    preds = []
-    for it in items:
-        cap = generate_caption(
+    try:
+        caption = generate_caption(
             model=model,
-            image_path=it["image_path"],
+            image_path=image_path,
             transform=transform,
             tokenizer=tokenizer,
-            max_seq_len=args.max_seq_len,
-            beam_size=args.beam_size,
+            max_seq_len=MAX_SEQ_LEN,
+            beam_size=BEAM_SIZE,
             device=device,
-            print_process=False,
+            print_process=False
         )
-        preds.append({"image_id": it["image_id"], "caption": cap})
 
-    os.makedirs(os.path.dirname(args.output_path), exist_ok=True)
-    with open(args.output_path, "w") as f:
-        json.dump(preds, f, ensure_ascii=False, indent=2)
+        results.append({
+            "image_id": img_id,
+            "caption": caption
+        })
 
-if __name__ == "__main__":
-    main()
+    except Exception as e:
+        print(f"[ERROR] {img_info['file_name']}: {e}")
+
+# ======== SAVE GENERATED RESULTS ========
+with open("generated_captions.json", "w") as f:
+    json.dump(results, f)
+
+# ======== EVALUATE WITH COCOEvalCap ========
+print("Evaluating with COCOEvalCap...")
+coco_res = coco.loadRes("generated_captions.json")
+coco_eval = COCOEvalCap(coco, coco_res)
+coco_eval.evaluate()
