@@ -67,16 +67,16 @@ The model was trained using the **MSCOCO 2014** dataset, a large-scale benchmark
 ### 🖥️ Landing Page
 
 <p align="center">
-  <img src="assets/L1.PNG" width="80%" />
-  <img src="assets/L2.PNG" width="80%" />
-  <img src="assets/L3.PNG" width="80%" />
-  <img src="assets/L4.PNG" width="80%" />
+  <img src="assets/L1.JPG" width="80%" />
+  <img src="assets/L2.JPG" width="80%" />
+  <img src="assets/L3.JPG" width="80%" />
+  <img src="assets/L4.JPG" width="80%" />
 </p>
 
 ### 🧾 Caption Generation Page
 
 <p align="center">
-  <img src="assets/C1.PNG" width="80%" />
+  <img src="assets/C1.JPG" width="80%" />
 </p>
 
 ---
@@ -85,12 +85,12 @@ The model was trained using the **MSCOCO 2014** dataset, a large-scale benchmark
 
 <table align="center">
   <tr>
-    <td><img src="assets/O1.PNG" width="100%"></td>
-    <td><img src="assets/O2.PNG" width="100%"></td>
+    <td><img src="assets/O1.JPG" width="100%"></td>
+    <td><img src="assets/O2.JPG" width="100%"></td>
   </tr>
   <tr>
-    <td><img src="assets/O3.PNG" width="100%"></td>
-    <td><img src="assets/O4.PNG" width="100%"></td>
+    <td><img src="assets/O3.JPG" width="100%"></td>
+    <td><img src="assets/O4.JPG" width="100%"></td>
   </tr>
 </table>
 
