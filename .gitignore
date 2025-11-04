@@ -1,0 +1,15 @@
+# Ignore folders
+__pycache__/
+.vscode/
+documentation/
+
+# Ignore files inside model/ and static/uploads/ but keep the folder itself
+static/uploads/*
+!static/uploads/.gitkeep
+model/*
+!model/.gitkeep
+Sample Images/*
+
+# Ignore specific files
+generated_captions.json
+.env

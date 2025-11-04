@@ -1,69 +1,72 @@
-document.addEventListener("DOMContentLoaded", function () {
-  const queryHeaders = document.querySelectorAll(".accordion-header");
-  const featureHeaders = document.querySelectorAll(".feature-header");
-  const featuresContainer = document.querySelector(".features-container");
-  const scrollToTopBtn = document.getElementById("scrollToTop");
-
-  // ================= Common Queries Accordion =================
-  queryHeaders.forEach(header => {
-    header.addEventListener("click", () => {
-      const item = header.parentElement;
-      const body = item.querySelector(".accordion-body");
-      const isActive = item.classList.contains("active");
-
-      document.querySelectorAll(".accordion-item").forEach(i => {
-        i.classList.remove("active");
-        const b = i.querySelector(".accordion-body");
-        if (b) b.style.maxHeight = null;
-      });
-
-      if (!isActive) {
-        item.classList.add("active");
-        if (body) body.style.maxHeight = body.scrollHeight + "px";
-      }
-    });
-  });
-
-  // ================= Features Accordion =================
-  featureHeaders.forEach(header => {
-    header.addEventListener("click", () => {
-      const item = header.parentElement;
-      const body = item.querySelector(".feature-body");
-      const isActive = item.classList.contains("active");
-
-      document.querySelectorAll(".feature-item").forEach(i => {
-        i.classList.remove("active");
-        const b = i.querySelector(".feature-body");
-        if (b) b.style.maxHeight = null;
-      });
-
-      featuresContainer.classList.remove("expanded");
-
-      if (!isActive) {
-        item.classList.add("active");
-        if (body) body.style.maxHeight = body.scrollHeight + "px";
-        featuresContainer.classList.add("expanded");
-      }
-    });
-  });
-
-  // ================= Scroll to Top Button =================
-  window.addEventListener("scroll", () => {
-    if (window.scrollY > 0) {
-      scrollToTopBtn.style.display = "flex";
+document.addEventListener('DOMContentLoaded', function() {
+  // Navbar scroll effect
+  const navbar = document.querySelector('.navbar');
+  
+  window.addEventListener('scroll', function() {
+    if (window.scrollY > 50) {
+      navbar.classList.add('scrolled');
     } else {
-      scrollToTopBtn.style.display = "none";
+      navbar.classList.remove('scrolled');
     }
   });
 
-  scrollToTopBtn.addEventListener("click", () => {
+  // Scroll to top button
+  const scrollToTopBtn = document.getElementById('scrollToTop');
+  
+  window.addEventListener('scroll', function() {
+    if (window.scrollY > 300) {
+      scrollToTopBtn.classList.add('visible');
+    } else {
+      scrollToTopBtn.classList.remove('visible');
+    }
+  });
+
+  scrollToTopBtn.addEventListener('click', function() {
     window.scrollTo({
       top: 0,
-      behavior: "smooth"
+      behavior: 'smooth'
     });
   });
-});
 
-document.getElementById("capx-text").addEventListener("click", () => {
-  location.reload();
+  // Smooth scroll for anchor links
+  document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+    anchor.addEventListener('click', function(e) {
+      const href = this.getAttribute('href');
+      if (href !== '#') {
+        e.preventDefault();
+        const target = document.querySelector(href);
+        if (target) {
+          const navbarHeight = navbar.offsetHeight;
+          const targetPosition = target.offsetTop - navbarHeight;
+          window.scrollTo({
+            top: targetPosition,
+            behavior: 'smooth'
+          });
+        }
+      }
+    });
+  });
+
+  // Add animation on scroll
+  const observerOptions = {
+    threshold: 0.1,
+    rootMargin: '0px 0px -50px 0px'
+  };
+
+  const observer = new IntersectionObserver(function(entries) {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.style.opacity = '1';
+        entry.target.style.transform = 'translateY(0)';
+      }
+    });
+  }, observerOptions);
+
+  // Observe feature cards
+  document.querySelectorAll('.feature-card, .why-item, .accordion-item').forEach(el => {
+    el.style.opacity = '0';
+    el.style.transform = 'translateY(20px)';
+    el.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+    observer.observe(el);
+  });
 });

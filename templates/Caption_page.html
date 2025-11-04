@@ -3,90 +3,143 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Image Caption Generator</title>
+  <title>Generate Caption - Captionize</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="/static/Caption_page.css">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400..900&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
-  <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
-  <link href="https://fonts.googleapis.com/css2?family=Exo+2:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
-  <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-  <link rel="shortcut icon" href="/static/images/AI_Logo.PNG" type="image/x-icon">
+  <link rel="icon" type="image/x-icon" href="static/images/AI_Logo.PNG">
 </head>
 <body>
-
-  <header class="logo-button">
-    <a href="{{ url_for('landing_page') }}" class="logo-container">
-      <img src="/static/images/AI_Logo.PNG" alt="AI Logo" class="logo-img">
-      <span class="logo-text">CapX-AI</span>
-    </a>
+  <!-- Header -->
+  <header class="app-header">
+    <div class="container">
+      <a href="{{ url_for('landing_page') }}" class="logo-link">
+        <i class="fa-solid fa-bolt brand-icon"></i>
+        <span class="brand-text">Captionize</span>
+      </a>
+    </div>
   </header>
 
-  <p class="title" style="font-family: 'Orbitron';">Automated Image Caption Generator</p>
+  <!-- Main Content -->
+  <main class="main-content">
+    <div class="container">
+      <div class="page-header text-center">
+        <h1 class="page-title">Transform Your Images Into <span class="gradient-text">Captions</span></h1>
+      </div>
 
-  <div id="dropBox" class="drop-box">
-    <p class="drop-text">Drag and drop image here</p>
-    <p class="image-formats">(JPG, PNG, & WebP)</p>
-    <p class="or-text">or</p>
-  
-    <!-- Wrap label + button in a container so they align side by side -->
-    <div class="button-group">
-      <label for="fileInput" class="custom-file-upload">
-        <!-- Text first line, icon second line -->
-        Upload Image
-        <i class="fas fa-upload"></i>
-      </label>
-      <input type="file" id="fileInput" accept="image/*" />
-  
-      <button id="openCameraButton" class="open-camera-btn">
-        <!-- Text first line, icon second line -->
-        Open Camera
-        <i class="fas fa-camera"></i>
-      </button>
+      <!-- Upload Section -->
+      <div class="upload-section">
+        <div class="upload-card" id="dropBox">
+          <div class="upload-content" id="uploadContent">
+            <div class="upload-icon">
+              <i class="fas fa-cloud-upload-alt"></i>
+            </div>
+            <h3 class="upload-title">Drop your image here</h3>
+            <p class="upload-subtitle">or</p>
+            <div class="upload-buttons">
+              <label for="fileInput" class="btn btn-upload">
+                <i class="fas fa-folder-open me-2"></i>
+                Browse Files
+              </label>
+              <input type="file" id="fileInput" accept="image/*" hidden />
+              <button id="openCameraButton" class="btn btn-camera">
+                <i class="fas fa-camera me-2"></i>
+                Open Camera
+              </button>
+            </div>
+            <p class="upload-formats">Supports: JPG, PNG, WebP</p>
+          </div>
+
+          <!-- File Preview -->
+          <div class="file-preview" id="filePreview" style="display: none;">
+            <div class="preview-image-container">
+              <img id="previewImage" src="" alt="Preview" />
+            </div>
+            <div class="preview-info">
+              <div class="preview-icon">
+                <i class="fas fa-check-circle"></i>
+              </div>
+              <div class="preview-details">
+                <p class="preview-label">Ready to generate</p>
+                <p class="preview-filename" id="previewFilename"></p>
+              </div>
+              <button class="btn-remove" id="removeFile">
+                <i class="fas fa-times"></i>
+              </button>
+            </div>
+          </div>
+
+          <!-- Camera Overlay -->
+          <div class="camera-overlay" id="cameraOverlay" style="display: none;">
+            <video id="cameraVideo" autoplay playsinline></video>
+            <div class="camera-controls">
+              <button id="switchCameraButton" class="btn-switch-camera" title="Switch Camera">
+                <i class="fas fa-sync-alt"></i>
+              </button>
+              <button id="captureButton" class="btn-capture">
+                <i class="fas fa-camera"></i>
+              </button>
+              <button id="closeCameraButton" class="btn-close-camera">
+                <i class="fas fa-times"></i>
+              </button>
+            </div>
+          </div>
+
+          <!-- Drop Overlay -->
+          <div class="drop-overlay" id="dropOverlay">
+            <i class="fas fa-cloud-upload-alt drop-overlay-icon"></i>
+            <p class="drop-overlay-text">Drop your image here</p>
+          </div>
+        </div>
+
+        <!-- Generate Button -->
+        <div class="text-center mt-4">
+          <button id="generateButton" class="btn btn-generate">
+            <i class="fas fa-magic me-2"></i>
+            Generate Caption
+          </button>
+        </div>
+      </div>
     </div>
-    
-    <!-- Overlay that appears when dragging -->
-    <div id="dropOverlay" class="drop-overlay">
-      <p class="drop-here-text">Drop Here</p>
-      <i class="fas fa-cloud-upload-alt drop-icon"></i>
-    </div>
-  
-    <!-- Camera preview overlay (hidden by default) -->
-    <div id="cameraPreviewOverlay" class="camera-preview-overlay">
-      <video id="cameraVideo" autoplay playsinline></video>
-      <button id="captureButton" class="capture-btn">
-        <i class="fas fa-camera"></i>
-      </button>
-    </div>
-  </div>
+  </main>
 
-  <!-- Show uploaded file info here (hidden by default) -->
-  <div id="uploadedInfo" style="display: none;">
-    <p class="uploaded-prefix">Uploaded:</p>
-    <p class="uploaded-filename" id="uploadedFilename"></p>
-    <span class="remove-text" id="removeFileLink">Remove</span>
-  </div>
-  
-
-  <button id="generateButton" class="generate-btn">✦ Generate Caption</button>
-
-  <div id="resultModal" class="result-modal" style="display: none;">
+  <!-- Result Modal -->
+  <div class="result-modal" id="resultModal" style="display: none;">
+    <div class="result-overlay" id="resultOverlay"></div>
     <div class="result-container">
-      <a href="#" class="back-button" id="backButton">
-        <img src="/static/images/back.png" alt="Back" class="back-icon">
-      </a>
-      <img id="imagePreview" alt="Image Preview" />
-      <div class="caption-wrapper">
-        <div id="speakerIcon">
-          <img src="/static/images/speaker.jpg" alt="Play Caption Audio">
-        </div>        
-        <div id="captionContainer" class="caption-container"></div>
+      <button class="btn-close-modal" id="closeModal">
+        <i class="fas fa-times"></i>
+      </button>
+      
+      <div class="result-content">
+        <div class="result-image-section">
+          <img id="resultImage" src="" alt="Result" />
+        </div>
+        
+        <div class="result-caption-section">
+          <div class="caption-header">
+            <h3 class="caption-title">Generated Caption</h3>
+            <button class="btn-speak" id="speakButton" title="Listen to caption">
+              <i class="fas fa-volume-up"></i>
+            </button>
+          </div>
+          <div class="caption-box">
+            <p id="captionText" class="caption-text">Generating your caption...</p>
+          </div>
+          <div class="caption-actions">
+            <button class="btn-copy" id="copyButton">
+              <i class="fas fa-copy me-2"></i>
+              Copy Caption
+            </button>
+          </div>
+        </div>
       </div>
     </div>
   </div>
 
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
   <script src="/static/Caption_page.js"></script>
 </body>
 </html>

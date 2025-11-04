@@ -1,428 +1,728 @@
-body {
-  padding-top: 80px;
-  font-family: 'Poppins', sans-serif;
+/* Root Variables */
+:root {
+  --primary-color: #6366f1;
+  --primary-dark: #4f46e5;
+  --secondary-color: #ec4899;
+  --accent-color: #8b5cf6;
+  --success-color: #10b981;
+  --bg-dark: #0f172a;
+  --bg-darker: #020617;
+  --text-light: #f1f5f9;
+  --text-gray: #94a3b8;
+  --card-bg: rgba(30, 41, 59, 0.5);
+  --border-color: rgba(148, 163, 184, 0.1);
+}
+
+/* Global Styles */
+* {
   margin: 0;
   padding: 0;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  background-color: #000000;
-  background-image: url('/static/images/background.png'); 
-  background-size: cover; 
-  background-position: center; 
-  background-repeat: no-repeat; 
-  background-attachment: fixed;
-  position: relative;
+  box-sizing: border-box;
 }
 
-/* Logo Button Styles */
-.logo-button {
-  position: fixed;
-  top: 20px;
-  left: 20px;
-  background: #1b1f3b;
-  border-radius: 40px;
-  display: flex;
-  align-items: center;
-  padding: 14px 28px;
+body {
+  font-family: 'Inter', sans-serif;
+  background: var(--bg-darker);
+  color: var(--text-light);
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* Header */
+.app-header {
+  background: rgba(15, 23, 42, 0.95);
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid var(--border-color);
+  padding: 1rem 0;
+  position: sticky;
+  top: 0;
   z-index: 1000;
-  box-shadow: 0px 6px 14px rgba(0, 0, 0, 0.3);
-  cursor: pointer;
 }
 
-.logo-container {
+.logo-link {
   display: flex;
   align-items: center;
+  gap: 0.75rem;
   text-decoration: none;
-  width: 100%;
+  transition: transform 0.3s ease;
 }
 
-.logo-img {
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  margin-right: 12px;
+.logo-link:hover {
+  transform: translateX(-5px);
 }
 
-.logo-text {
-  font-size: 22px;
-  font-weight: 600;
-  color: white;
-  font-family: 'Poppins', sans-serif;
+.brand-icon {
+  font-size: 2rem;
+  background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
 }
 
-.logo-button:hover {
-  background: #1b1f3b;
+.brand-text {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--text-light);
+  font-family: 'Space Grotesk', sans-serif;
 }
 
-/* Title Styles */
-.title {
-  margin-top: 100px;
-  text-align: center;
-  color: white;
-  font-size: 60px;
-  font-weight: 500;
-  margin-bottom: 20px;
+/* Main Content */
+.main-content {
+  padding: 2rem 0;
+  min-height: calc(100vh - 80px);
+  display: flex;
+  align-items: center;
 }
 
-/* Drag and Drop Box Styles */
-.drop-box {
-  margin-top: 80px;
+.page-header {
+  margin-bottom: 2rem;
+}
+
+.page-title {
+  font-size: clamp(1.5rem, 4vw, 2.5rem);
+  font-weight: 800;
+  margin-bottom: 0;
+  font-family: 'Space Grotesk', sans-serif;
+}
+
+.gradient-text {
+  background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Upload Section */
+.upload-section {
+  max-width: 700px;
+  margin: 0 auto;
+}
+
+.upload-card {
+  background: var(--card-bg);
+  border: 2px dashed var(--border-color);
+  border-radius: 25px;
+  padding: 2rem;
+  transition: all 0.3s ease;
   position: relative;
-  width: 550px;
-  max-width: 90%;
-  padding: 3rem;
-  min-height: 250px;
-  border-radius: 15px;
-  text-align: center;
-  background: #E0E0E0;
-  margin-bottom: 20px;
+  backdrop-filter: blur(10px);
+  min-height: 320px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
-/* Pseudo-element for dashed border inset within the drop-box */
-.drop-box::before {
-  content: '';
-  position: absolute;
-  top: 15px;
-  left: 15px;
-  right: 15px;
-  bottom: 15px;
-  border: 4px dashed #ff3c00;
-  border-radius: 15px;
+.upload-card.drag-over {
+  border-color: var(--primary-color);
+  background: rgba(99, 102, 241, 0.05);
+}
+
+.upload-card.drag-over .upload-content {
+  opacity: 0;
   pointer-events: none;
-  transition: border-color 0.3s ease;
-  z-index: 0;
 }
 
-.drop-box.active::before {
-  border-color: blue;
+.upload-card.has-file {
+  border-style: solid;
+  border-color: var(--success-color);
 }
 
-/* Ensure inner elements appear above the pseudo-element */
-.drop-box > * {
-  position: relative;
-  z-index: 1;
+.upload-content {
+  text-align: center;
+  width: 100%;
+  transition: opacity 0.3s ease;
 }
 
-.drop-box.uploaded::before {
-  border-color: blue;
+.upload-icon {
+  width: 80px;
+  height: 80px;
+  margin: 0 auto 1.5rem;
+  background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
-
-.drop-text {
-  margin-top: 10px;
-  margin-bottom: 30px;
-  font-size: 32px;
-  font-weight: bold;
-  color: #2c3e50;
-  overflow-wrap: break-word;
-  white-space: normal;
-  position: relative; /* if needed */
+.upload-icon i {
+  font-size: 2.5rem;
+  color: white;
 }
 
-.image-formats {
-  color: #2c3e50;
-  font-weight: 500;
+.upload-title {
+  font-size: 1.3rem;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+  color: var(--text-light);
+}
+
+.upload-subtitle {
+  font-size: 1rem;
+  color: var(--text-gray);
+  margin: 1rem 0;
+}
+
+.upload-buttons {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin-bottom: 1rem;
+}
+
+.btn-upload,
+.btn-camera {
+  padding: 0.8rem 1.5rem;
+  border-radius: 50px;
+  font-weight: 600;
+  font-size: 0.95rem;
+  transition: all 0.3s ease;
+  border: none;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+}
+
+.btn-upload {
+  background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
+  color: white;
+}
+
+.btn-upload:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 10px 25px rgba(99, 102, 241, 0.4);
+}
+
+.btn-camera {
+  background: transparent;
+  border: 2px solid var(--border-color);
+  color: var(--text-light);
+}
+
+.btn-camera:hover {
+  background: var(--card-bg);
+  border-color: var(--primary-color);
+  color: var(--primary-color);
+}
+
+.upload-formats {
+  font-size: 0.85rem;
+  color: var(--text-gray);
+  margin: 0;
+}
+
+/* File Preview */
+.file-preview {
+  width: 100%;
+  text-align: center;
+}
+
+.preview-image-container {
+  margin-bottom: 1.5rem;
+}
+
+.preview-image-container img {
+  max-width: 100%;
+  max-height: 200px;
+  border-radius: 15px;
+  border: 3px solid var(--success-color);
+  box-shadow: 0 10px 30px rgba(16, 185, 129, 0.3);
+}
+
+.preview-info {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  background: rgba(16, 185, 129, 0.1);
+  border: 1px solid var(--success-color);
+  border-radius: 15px;
+  padding: 1rem 1.5rem;
+}
+
+.preview-icon {
+  width: 35px;
+  height: 35px;
+  background: var(--success-color);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.preview-icon i {
+  color: white;
+  font-size: 1rem;
+}
+
+.preview-details {
+  flex: 1;
+  text-align: left;
+}
+
+.preview-label {
+  font-size: 0.85rem;
+  color: var(--success-color);
+  font-weight: 600;
+  margin: 0;
+}
+
+.preview-filename {
+  font-size: 0.95rem;
+  color: var(--text-light);
+  margin: 0;
+  word-break: break-word;
+}
+
+.btn-remove {
+  width: 35px;
+  height: 35px;
+  background: rgba(239, 68, 68, 0.1);
+  border: 1px solid #ef4444;
+  border-radius: 50%;
+  color: #ef4444;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.btn-remove:hover {
+  background: #ef4444;
+  color: white;
+  transform: scale(1.1);
+}
+
+/* Camera Overlay */
+.camera-overlay {
   position: absolute;
-  top: calc(30px + 52px); /* adjust this so it appears immediately below .drop-text */
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: #000;
+  border-radius: 25px;
+  overflow: hidden;
+  z-index: 10;
+}
+
+.camera-overlay video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.camera-controls {
+  position: absolute;
+  bottom: 1.5rem;
   left: 50%;
   transform: translateX(-50%);
-  font-size: 20px;
-}
-
-
-
-.or-text {
-  
-  margin-bottom: 30px;
-  font-size: 28px;
-  color: #2c3e50;
-}
-
-#fileInput {
-  display: none;
-}
-
-/* Common styles for both Upload & Camera buttons */
-.custom-file-upload,
-.open-camera-btn {
   display: flex;
+  gap: 1rem;
+  z-index: 11;
+  align-items: center;
+}
+
+.btn-switch-camera {
+  width: 50px;
+  height: 50px;
+  background: rgba(255, 255, 255, 0.2);
+  border: 2px solid white;
+  border-radius: 50%;
+  color: white;
+  font-size: 1.2rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  backdrop-filter: blur(10px);
+}
+
+.btn-switch-camera:hover {
+  background: rgba(255, 255, 255, 0.3);
+  transform: scale(1.1);
+}
+
+.btn-capture {
+  width: 70px;
+  height: 70px;
+  background: white;
+  border: 4px solid var(--primary-color);
+  border-radius: 50%;
+  color: var(--primary-color);
+  font-size: 1.8rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.btn-capture:hover {
+  transform: scale(1.1);
+  background: var(--primary-color);
+  color: white;
+}
+
+.btn-close-camera {
+  width: 50px;
+  height: 50px;
+  background: rgba(239, 68, 68, 0.9);
+  border: none;
+  border-radius: 50%;
+  color: white;
+  font-size: 1.2rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.btn-close-camera:hover {
+  background: #ef4444;
+  transform: scale(1.1);
+}
+
+/* Drop Overlay */
+.drop-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(99, 102, 241, 0.1);
+  border-radius: 25px;
+  display: none;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  text-align: center;
-  font-size: 18px;
-  font-weight: 700;
-  background-color: #3498db;
-  color: white;
-  border: none;
-  border-radius: 8px;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
-  padding: 14px 30px;
+  z-index: 5;
+  pointer-events: none;
 }
 
-/* Hover effects */
-.custom-file-upload:hover,
-.open-camera-btn:hover {
-  background-color: #2980b9;
-}
-
-/* Adjust icon size/spacing if needed */
-.custom-file-upload i,
-.open-camera-btn i {
-  font-size: 24px;
-  margin-top: 5px;
-}
-
-/* Uploaded file name styles */
-.uploaded-prefix {
-  font-size: 22px;
-  color: #000000;
-  margin: 10px 0;
-  font-weight: bold;
-}
-
-.uploaded-filename {
-  font-size: 22px;
-  color: #2c3e50;
-  margin: 10px 0;
-  overflow-wrap: break-word;
-  white-space: normal;
-}
-
-/* "Remove" link style */
-.remove-text {
-  color: blue;
-  text-decoration: underline;
-  cursor: pointer;
-  margin-top: 8px;
-  font-size: 24px;
-}
-
-.button-group {
+.upload-card.drag-over .drop-overlay {
   display: flex;
-  gap: 20px;
-  justify-content: center;
-  align-items: center;
-  margin-top: 15px;
 }
 
-/* Generate Button Styles */
-button.generate-btn {
-  padding: 14px 30px;
-  font-size: 18px;
+.drop-overlay-icon {
+  font-size: 4rem;
+  color: var(--primary-color);
+  margin-bottom: 1rem;
+}
+
+.drop-overlay-text {
+  font-size: 1.3rem;
   font-weight: 700;
-  background-color: #1fba60;
-  color: white;
+  color: var(--primary-color);
+  margin: 0;
+}
+
+/* Generate Button */
+.btn-generate {
+  background: linear-gradient(135deg, var(--success-color), #059669);
   border: none;
-  border-radius: 8px;
+  padding: 1rem 2.5rem;
+  border-radius: 50px;
+  color: white;
+  font-weight: 700;
+  font-size: 1.1rem;
+  transition: all 0.3s ease;
   cursor: pointer;
-  transition: background-color 0.3s ease;
-  margin-bottom: 20px;
+  display: inline-flex;
+  align-items: center;
 }
 
-button.generate-btn:hover {
-  background-color: #27ae60;
+.btn-generate:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 15px 35px rgba(16, 185, 129, 0.4);
 }
 
-/* Modal (Result) Styles */
+.btn-generate:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* Result Modal */
 .result-modal {
   position: fixed;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  background: rgba(0,0,0,0.5);
-  backdrop-filter: blur(5px);
-  display: flex;
-  justify-content: center;
-  align-items: center;
   z-index: 2000;
-}
-
-.result-container {
-  background-color: #f9f9f9;
-  padding: 2.5rem 3rem;
-  border-radius: 15px;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-  position: relative;
-  width: 80%;
-  max-width: 900px;
-  height: 800px;
-  overflow: hidden;
-  margin: 0 auto;
-}
-
-/* Back Button Styles */
-.back-button {
-  position: absolute;
-  top: 20px;
-  left: 20px;
-  transition: transform 0.3s ease;
-}
-
-.back-button:hover {
-  transform: scale(1.1);
-}
-
-.back-icon {
-  width: 60px;
-  height: 60px;
-  object-fit: contain;
-}
-
-/* Image Preview Styles */
-#imagePreview {
-  max-width: 100%;
-  max-height: 500px;
-  border-radius: 10px;
-  display: block;
-  margin: 60px auto 20px auto;
-  border: 4px solid #ff3c00;
-  box-shadow: 0 0 20px rgba(255, 0, 0, 0.9);
-  padding: 5px;
-}
-
-/* Caption Container Styles with Neon Blue Style */
-.caption-container {
-  width: 700px;
-  margin: 10px auto;
-  padding: 1em 1.2em;
-  background-color: #ffffff;
-  border-radius: 8px;
-  border: 4px solid #0ff;
-  box-shadow: 0 0 20px rgba(0, 255, 255, 0.9);
-  color: rgb(0, 0, 0);
-  font-size: 38px;
-  font-weight: bold;
-  font-family: 'Poppins' ;
-  text-align: center;
-  transition: all 0.3s ease;
-  word-break: break-word;
-  -webkit-text-stroke: 1px #0ff;
-  text-shadow: 
-    0 0 3px #0ff,
-    0 0 5px #0ff,
-    0 0 7px #0ff,
-    0 0 10px #0ff;
-}
-
-.caption-container::first-letter {
-  text-transform: uppercase;
-}
-
-/* Caption Wrapper */
-.caption-wrapper {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  width: fit-content; 
-  margin: 0 auto; 
-  position: relative;
-}
-
-/* Speaker Icon Styles */
-#speakerIcon {
-  position: absolute;
-  width: 60px;
-  height: 60px;
-  left: -70px;
-  top: 50%;
-  transform: translateY(-50%);
-  border: 2px solid #000;
-  border-radius: 50%;
-  background-color: #fff;
   display: flex;
   align-items: center;
   justify-content: center;
-  box-sizing: border-box;
-  cursor: pointer;
+  padding: 1rem;
 }
 
-#speakerIcon img {
-  max-width: 60%;
-  max-height: 60%;
-}
-
-/* Camera Preview Overlay */
-.camera-preview-overlay {
+.result-overlay {
   position: absolute;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  background-color: #000;
-  display: none;
-  z-index: 2;
+  background: rgba(0, 0, 0, 0.85);
+  backdrop-filter: blur(10px);
 }
 
-.camera-preview-overlay video {
+.result-container {
+  position: relative;
+  background: var(--bg-dark);
+  border: 1px solid var(--border-color);
+  border-radius: 25px;
+  max-width: 900px;
   width: 100%;
-  height: 100%;
-  object-fit: cover;
+  max-height: 90vh;
+  overflow-y: auto;
+  padding: 2rem;
+  z-index: 1;
 }
 
-/* Capture Button (small circle with camera icon) */
-.capture-btn {
+.btn-close-modal {
   position: absolute;
-  bottom: 10px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 50px;
-  height: 50px;
-  background-color: grey;
-  border: none;
+  top: 1rem;
+  right: 1rem;
+  width: 40px;
+  height: 40px;
+  background: rgba(239, 68, 68, 0.1);
+  border: 1px solid #ef4444;
   border-radius: 50%;
+  color: #ef4444;
+  cursor: pointer;
+  transition: all 0.3s ease;
   display: flex;
   align-items: center;
   justify-content: center;
-  cursor: pointer;
+  z-index: 2;
 }
 
-.capture-btn i {
+.btn-close-modal:hover {
+  background: #ef4444;
   color: white;
-  font-size: 24px;
+  transform: scale(1.1);
 }
 
-/* --- New Drop Box Overlay Styles --- */
-.drop-overlay {
-    display: none;  /* Hidden initially */
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: transparent; 
-    border-radius: 15px;
-    text-align: center;
-    justify-content: center;
-    align-items: center;
+.result-content {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.5rem;
+  margin-top: 1rem;
+}
+
+.result-image-section {
+  text-align: center;
+}
+
+.result-image-section img {
+  max-width: 100%;
+  max-height: 350px;
+  border-radius: 15px;
+  border: 3px solid var(--primary-color);
+  box-shadow: 0 10px 40px rgba(99, 102, 241, 0.3);
+}
+
+.result-caption-section {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.caption-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.caption-title {
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: var(--text-light);
+  margin: 0;
+  font-family: 'Space Grotesk', sans-serif;
+}
+
+.btn-speak {
+  width: 45px;
+  height: 45px;
+  background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
+  border: none;
+  border-radius: 50%;
+  color: white;
+  font-size: 1.1rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.btn-speak:hover {
+  transform: scale(1.1);
+  box-shadow: 0 5px 20px rgba(99, 102, 241, 0.4);
+}
+
+.caption-box {
+  background: linear-gradient(135deg, rgba(99, 102, 241, 0.1), rgba(236, 72, 153, 0.1));
+  border: 2px solid var(--primary-color);
+  border-radius: 20px;
+  padding: 2rem 1.5rem;
+  min-height: 120px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.caption-text {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #ec4899;
+  /* background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text; */
+  line-height: 1.6;
+  margin: 0;
+  text-align: center;
+  word-break: break-word;
+  font-family: 'Space Grotesk', sans-serif;
+
+    /* Remove gradient properties */
+  background: none;
+  -webkit-background-clip: unset;
+  -webkit-text-fill-color: unset;
+  background-clip: unset;
+}
+
+.caption-actions {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+}
+
+.btn-copy {
+  background: transparent;
+  border: 2px solid var(--border-color);
+  padding: 0.7rem 1.8rem;
+  border-radius: 50px;
+  color: var(--text-light);
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: inline-flex;
+  align-items: center;
+}
+
+.btn-copy:hover {
+  background: var(--card-bg);
+  border-color: var(--primary-color);
+  color: var(--primary-color);
+}
+
+/* Responsive Design */
+@media (max-width: 767px) {
+  .main-content {
+    padding: 1.5rem 0;
+  }
+
+  .page-header {
+    margin-bottom: 1.5rem;
+  }
+
+  .page-title {
+    font-size: 1.5rem;
+  }
+
+  .upload-card {
+    padding: 1.5rem 1rem;
+    min-height: 280px;
+  }
+
+  .upload-icon {
+    width: 70px;
+    height: 70px;
+  }
+
+  .upload-icon i {
+    font-size: 2rem;
+  }
+
+  .upload-title {
+    font-size: 1.1rem;
+  }
+
+  .upload-buttons {
     flex-direction: column;
-    pointer-events: none;
-    z-index: 2;
+    width: 100%;
+  }
+
+  .btn-upload,
+  .btn-camera {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .preview-info {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .preview-details {
+    text-align: center;
+  }
+
+  .result-container {
+    padding: 1.5rem;
+    max-height: 95vh;
+  }
+
+  .btn-close-modal {
+    top: 0.75rem;
+    right: 0.75rem;
+    width: 36px;
+    height: 36px;
+  }
+
+  .result-image-section img {
+    max-height: 280px;
+  }
+
+  .caption-text {
+    font-size: 1.2rem;
+  }
+
+  .btn-generate {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .caption-box {
+    padding: 1.5rem 1rem;
+    min-height: 100px;
+  }
 }
 
-.drop-here-text {
-    font-size: 36px;
-    font-weight: bold;
-    color: black;
-    margin-bottom: 10px;
+/* Custom Scrollbar */
+.result-container::-webkit-scrollbar {
+  width: 8px;
 }
 
-.drop-icon {
-    font-size: 50px;
-    color: blue;
+.result-container::-webkit-scrollbar-track {
+  background: var(--bg-darker);
+  border-radius: 10px;
 }
 
-/* Show overlay and hide default content when dragging */
-.drop-box.active .drop-overlay {
-    display: flex;
+.result-container::-webkit-scrollbar-thumb {
+  background: var(--primary-color);
+  border-radius: 10px;
 }
 
-.drop-box.active .drop-text,
-.drop-box.active .image-formats,
-.drop-box.active .or-text,
-.drop-box.active .button-group {
-    display: none;
+.result-container::-webkit-scrollbar-thumb:hover {
+  background: var(--primary-dark);
 }
