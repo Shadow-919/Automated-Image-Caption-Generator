@@ -56,9 +56,18 @@ def main():
     start_time = time.time()
 
     model = ImageCaptionModel(**model_configs)
-    model.load_state_dict(torch.load(args.model_path, map_location=device))
+    
+    state = torch.load(model_path, map_location=device)
+    model.load_state_dict(state, strict=False)
+    
+    # Reduce memory: FP16
+    model.half()
+    
     model.to(device)
     model.eval()
+    
+    # Ensure input stays FP32 for image, convert to FP16 inside model
+
 
     elapsed_time = timedelta(seconds=int(time.time() - start_time))
     print(f"✅ Model loaded on {device} in {elapsed_time}")

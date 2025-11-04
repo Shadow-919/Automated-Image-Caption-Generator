@@ -37,9 +37,18 @@ model_configs = {
 }
 
 model = ImageCaptionModel(**model_configs)
-model.load_state_dict(torch.load(MODEL_PATH, map_location=device), strict=False)
+
+state = torch.load(model_path, map_location=device, mmap=True)
+model.load_state_dict(state, strict=False)
+
+# Reduce memory: FP16
+model.half()
+
 model.to(device)
 model.eval()
+
+# Ensure input stays FP32 for image, convert to FP16 inside model
+
 
 # ======== LOAD COCO DATASET ========
 coco = COCO(ANNOTATION_FILE)

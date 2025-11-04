@@ -7,120 +7,108 @@ import gdown
 
 from models import ImageCaptionModel
 from evaluation import generate_caption
-from utils import transform  # only transform now
+from utils import transform
 
-# Load env for local dev
 load_dotenv()
-
 app = Flask(__name__, template_folder="templates", static_folder="static")
 
-# Force CPU (Render free tier)
 device = torch.device("cpu")
 
-# Model directory & file
+# Model paths
 model_dir = "./model"
 os.makedirs(model_dir, exist_ok=True)
-model_file = "Model_EfficientNetB5_Transformer.pt"
-model_path = os.path.join(model_dir, model_file)
+file_name = "Model_EfficientNetB5_Transformer.pt"
+model_path = os.path.join(model_dir, file_name)
 
-# Google Drive file ID
-gdrive_file_id = os.getenv("GDRIVE_FILE_ID")
-if not gdrive_file_id:
-    raise ValueError("❌ GDRIVE_FILE_ID not set. Add it in Render Environment Variables.")
+gdrive_id = os.getenv("GDRIVE_FILE_ID")
+if not gdrive_id:
+    raise ValueError("Missing env GDRIVE_FILE_ID")
 
-# Download model if missing
-def download_model_if_needed():
-    if os.path.exists(model_path):
-        print("✅ Model already exists locally")
-        return
-    
-    print("⬇️ Model not found. Downloading from Google Drive...")
-    url = f"https://drive.google.com/uc?id={gdrive_file_id}"
+# Download model
+if not os.path.exists(model_path):
+    print("⬇️ Downloading model...")
+    url = f"https://drive.google.com/uc?id={gdrive_id}"
     gdown.download(url, model_path, quiet=False)
-    print("✅ Model downloaded successfully!")
+    print("✅ Downloaded")
 
-download_model_if_needed()
 
-# Model params
+# Model hyperparams
 embedding_dim = 512
 max_seq_len = 128
 encoder_layers = 6
 decoder_layers = 12
 num_heads = 8
 dropout = 0.1
-beam_size = 2
+beam = 2
 
 # Tokenizer
 tokenizer = BertTokenizer.from_pretrained("bert-base-uncased")
 
-# Build model
+# Load model
 model = ImageCaptionModel(
-    embedding_dim=embedding_dim,
-    vocab_size=tokenizer.vocab_size,
-    max_seq_len=max_seq_len,
-    encoder_layers=encoder_layers,
-    decoder_layers=decoder_layers,
-    num_heads=num_heads,
-    dropout=dropout,
+    embedding_dim,
+    tokenizer.vocab_size,
+    max_seq_len,
+    encoder_layers,
+    decoder_layers,
+    num_heads,
+    dropout
 )
 
-# Load weights
-model.load_state_dict(torch.load(model_path, map_location=device))
-model.to(device)
-model.eval()
+state = torch.load(model_path, map_location=device)
+model.load_state_dict(state, strict=False)
 
-# Warm-up once
+# Convert to FP16 for Render
+for p in model.parameters():
+    p.data = p.data.half()
+
+model.to(device).eval()
+
+# warm up EfficientNet
 try:
-    dummy = torch.zeros((1, 3, 224, 224)).to(device)
+    dummy = torch.zeros((1, 3, 224, 224)).half().to(device)
     _ = model.encoder(dummy)
-    print("🔥 Model warm-up complete")
-except Exception as e:
-    print("Warm-up skipped:", e)
+    print("🔥 FP16 warm-up done")
+except:
+    pass
 
 # Upload folder
 upload_dir = os.path.join(app.static_folder, "uploads")
 os.makedirs(upload_dir, exist_ok=True)
 app.config["UPLOAD_FOLDER"] = upload_dir
 
-# Routes
 @app.route("/")
 def home():
     return render_template("Landing_page.html")
 
 @app.route("/app")
-def caption_ui():
+def ui():
     return render_template("Caption_page.html")
 
 @app.route("/caption", methods=["POST"])
 def caption():
     if "image" not in request.files:
-        return jsonify({"error": "No image uploaded"}), 400
-    
+        return jsonify({"error": "no image"}), 400
+
     image = request.files["image"]
-    filename = image.filename
-    save_path = os.path.join(upload_dir, filename)
+    save_path = os.path.join(upload_dir, image.filename)
     image.save(save_path)
 
-    try:
-        caption_text = generate_caption(
-            model=model,
-            image_path=save_path,
-            transform=transform,
-            tokenizer=tokenizer,
-            max_seq_len=max_seq_len,
-            beam_size=beam_size,
-            device=device,
-            print_process=False
-        )
+    cap = generate_caption(
+        model,
+        save_path,
+        transform,
+        tokenizer,
+        max_seq_len,
+        beam,
+        device,
+        False
+    )
 
-        return jsonify({
-            "caption": caption_text,
-            "image_url": url_for("static", filename=f"uploads/{filename}", _external=True)
-        })
+    return jsonify({
+        "caption": cap,
+        "image_url": url_for("static", filename=f"uploads/{image.filename}", _external=True)
+    })
 
-    except Exception as e:
-        return jsonify({"error": str(e)}), 500
-
-# Entry
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5000)
