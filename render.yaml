@@ -1,0 +1,9 @@
+services:
+  - type: web
+    name: image-caption-ai
+    env: python
+    plan: free
+    buildCommand: pip install -r requirements.txt
+    startCommand: gunicorn app:app
+    envVars:
+      PYTHON_VERSION: 3.10.13
